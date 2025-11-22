@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Street Light Control Interface</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="header-container">
+        <h2>Control Your Street Lights</h2>
+        <button class="home-button" onclick="location.href='main.html'">Home</button>
+    </div>
+
+    <table>
+        <tr>
+            <th>Street Light</th>
+            <th>OFF Switch</th>
+            <th>ON Switch</th>
+            <th>Bulb Status</th>
+            <th>Brightness Range</th>
+        </tr>
+    </table>
+
+    <button class="submit-btn" onclick="submitLightStatus()">Submit</button>
+
+    <script>
+        const lightStatus = Array(19).fill(0); // 0 = OFF, 1 = ON
+        const brightnessLevels = Array(19).fill(0); // Default brightness level (50%)
+        const streetLights = Array.from({ length: 19 }, (_, i) => `Street_Light_${String(i + 1).padStart(2, '0')}`);
+        const table = document.querySelector('table');
+
+        function renderTable() {
+            streetLights.forEach((light, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="light-number">${light}</td>
+                    <td><div style="display: flex; justify-content: center;"><button class="off" onclick="toggleLight(${index}, false)"><i class="fas fa-power-off"></i>Off</button></div></td>
+                    <td><div style="display: flex; justify-content: center;"><button class="on" onclick="toggleLight(${index}, true)"><i class="fas fa-lightbulb"></i>On</button></div></td>
+                    <td><i class="fas fa-lightbulb bulb" id="${light.replace(/ /g, '_')}"></i></td>
+                    <td>
+                        <input type="range" min="0" max="100" value="0" id="brightness_${index}" 
+                            oninput="updateBrightness(${index}, this.value)" />
+                        <span id="brightnessValue_${index}">0%</span>
+                    </td>
+                `;
+                table.appendChild(row);
+            });
+        }
+
+        renderTable();
+
+        function toggleLight(index, isOn) {
+            const bulb = document.getElementById(`Street_Light_${String(index + 1).padStart(2, '0')}`);
+            const brightnessInput = document.getElementById(`brightness_${index}`);
+            const brightnessValue = document.getElementById(`brightnessValue_${index}`);
+
+            lightStatus[index] = isOn ? 1 : 0; // Update light status
+            bulb.style.color = isOn ? 'yellow' : 'gray'; // Update bulb color
+
+            if (isOn) {
+                brightnessInput.value = brightnessLevels[index];
+                brightnessValue.textContent = `${brightnessLevels[index]}%`;
+            } else {
+                brightnessInput.value = 0;
+                brightnessValue.textContent = `0%`;
+            }
+        }
+
+        function updateBrightness(index, value) {
+            if (lightStatus[index] === 1) {
+                brightnessLevels[index] = parseInt(value, 10);
+                document.getElementById(`brightnessValue_${index}`).textContent = `${value}%`;
+            } else {
+                document.getElementById(`brightness_${index}`).value = 0;
+                document.getElementById(`brightnessValue_${index}`).textContent = `0%`;
+            }
+        }
+
+        async function fetchPreviousLightStatus() {
+            const refPath = ref(database, 'street_lights');
+            try {
+                const snapshot = await get(refPath);
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    const statuses = data.statuses || [];
+                    const brightness = data.brightness || Array(19).fill(0);
+
+                    statuses.forEach((status, index) => {
+                        toggleLight(index, status === 1); 
+                        if (status === 1) {
+                            brightnessLevels[index] = brightness[index];
+                        }
+                    });
+                } else {
+                    console.log("No data available");
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchPreviousLightStatus);
+
+        async function submitLightStatus() {
+            const refPath = ref(database, 'street_lights');
+
+            set(refPath, {
+                timestamp: new Date().getTime(),
+                statuses: lightStatus,
+                brightness: brightnessLevels,
+            })
+                .then(() => alert("Light status and brightness submitted successfully!"))
+                .catch((error) => alert("Failed to submit data! Error: " + error.message));
+        }
+    </script>
+
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDRJOgy8LfNAL0JfPOyMQOiBPaN7gIcrIA",
+            authDomain: "es-project-f29d8.firebaseapp.com",
+            databaseURL: "https://es-project-f29d8-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "es-project-f29d8",
+            storageBucket: "es-project-f29d8.firebasestorage.app",
+            messagingSenderId: "969901391303",
+            appId: "1:969901391303:web:ecaa29c6b0cc8bfc682de2",
+            measurementId: "G-D0Y0X287H9"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Submit current light status and brightness to Firebase
+        window.submitLightStatus = function () {
+            const currentStatus = lightStatus.slice(); // Clone lightStatus
+            const currentBrightness = brightnessLevels.slice(); // Clone brightnessLevels
+            const refPath = ref(database, 'street_lights');
+
+            set(refPath, {
+                timestamp: new Date().getTime(),
+                statuses: currentStatus,
+                brightness: currentBrightness,
+            })
+                .then(() => {
+                    alert("Light status and brightness submitted successfully!");
+                    console.log("Data saved successfully:", { currentStatus, currentBrightness });
+                })
+                .catch((error) => {
+                    alert("Failed to submit data!");
+                    console.error("Error saving data:", error);
+                });
+        };
+
+        // Fetch previous light status and brightness from Firebase
+        async function fetchPreviousLightStatus() {
+            const refPath = ref(database, 'street_lights');
+            try {
+                const snapshot = await get(refPath);
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    const statuses = data.statuses || [];
+                    const brightness = data.brightness || Array(19).fill(50);
+                    console.log("Fetched data:", data);
+
+                    statuses.forEach((status, index) => {
+                        toggleLight(index, status === 1);
+
+                        // Adjust brightness display based on light status
+                        const rangeInput = document.getElementById(`brightness_${index}`);
+                        const rangeValue = document.getElementById(`brightnessValue_${index}`);
+                        if (status === 1) {
+                            rangeInput.value = brightness[index];
+                            rangeValue.textContent = `${brightness[index]}%`;
+                            brightnessLevels[index] = brightness[index];
+                        } else {
+                            rangeInput.value = 0;
+                            rangeValue.textContent = `0%`;
+                            brightnessLevels[index] = 0;
+                        }
+                    });
+                } else {
+                    console.log("No data available");
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+
+        // Fetch and apply previous light status and brightness on page load
+        document.addEventListener('DOMContentLoaded', fetchPreviousLightStatus);
+    </script>
+</body>
+
+    </html>

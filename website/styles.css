@@ -1,0 +1,228 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #e0f7fa; /* Light cyan background */
+    padding: 40px;
+    color: #333;
+    text-align: center;
+}
+
+.header-container {
+    display: flex; /* Use flexbox for horizontal layout */
+    justify-content: center; /* Center content */
+    align-items: center; /* Center vertically */
+    margin-bottom: 40px; /* Space below the header */
+    background-color: rgba(0, 121, 107, 0.2); /* Light green background for the heading */
+    border-radius: 10px; /* Rounded corners */
+    padding: 20px; /* Padding around header */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Shadow for depth */
+}
+
+h2 {
+    margin: 0; /* Remove default margin */
+    color: #004d40; /* Dark teal text */
+    font-size: 1.5em; /* Adjust heading size */
+}
+
+.home-button {
+    margin-left: 20px; /* Space between heading and button */
+    padding: 10px 20px;
+    background-color: #00796b; /* Dark teal background */
+    color: white; /* White text color */
+    border: none;
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer on hover */
+    transition: background-color 0.3s ease; /* Smooth background transition */
+    font-size: 1.2em; /* Slightly larger font size */
+}
+
+.home-button:hover {
+    background-color: #004d40; /* Darker teal on hover */
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 20px 5px; /* Spacing between rows */
+    margin: 20px 0;
+    animation: slideIn 0.5s; /* Slide-in animation */
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+th {
+    font-size: 1.2em; /* Larger font size for headers */
+    padding: 15px; /* Padding for headers */
+    text-align: center;
+    color: #FFFFFF; /* White text color */
+    border-radius: 8px; /* Rounded corners */
+    transition: background-color 0.3s ease; /* Smooth background transition */
+}
+
+th:nth-child(1) {
+    background-color: #3ba5b8; /* Dark green for Street Light */
+}
+
+th:nth-child(2) {
+    background-color: #b95555; /* Dark red for OFF Switch */
+}
+
+th:nth-child(3) {
+    background-color: #388e3c; /* Dark green for ON Switch */
+}
+
+th:nth-child(4) {
+    background-color: #f57c00; /* Orange for Bulb Status */
+}
+th:nth-child(5) {
+    background-color: rgb(225, 225, 72); /* Orange for Bulb Status */
+
+}
+
+th:hover {
+    opacity: 0.8; /* Slightly reduce opacity on hover */
+}
+
+td {
+    font-size: 0.9em; /* Smaller font size for table cells */
+    padding: 10px; /* Padding for table cells */
+    text-align: center; /* Center text */
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, background-color 0.3s; /* Transition for hover effect */
+}
+
+td:nth-child(1) {
+    background-color: #4db6ac; /* Light teal for Street Light */
+}
+
+td:nth-child(2) {
+    background-color: #ffccbc; /* Light red for OFF Switch */
+}
+
+td:nth-child(3) {
+    background-color: #c8e6c9; /* Light green for ON Switch */
+}
+
+td:nth-child(4) {
+    background-color: rgb(37, 34, 34); /* Light amber for Bulb Status */
+}
+
+tr:hover td {
+    transform: scale(1.02); /* Slightly enlarge cells on hover */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Specific styles for the light number */
+.light-number {
+    font-weight: bold; /* Make the street light number bold */
+}
+
+/*-- new ones Brightness control styling */
+.brightness-container {
+margin-top: 20px;
+color: #004d40;
+text-align: center;
+}
+
+.brightness-container input {
+width: 250px;
+margin: 10px;
+}
+
+.brightness-container label {
+font-size: 18px;
+margin-bottom: 5px;
+}
+
+.brightness-container p {
+font-size: 18px;
+}
+
+
+button {
+    border-radius: 8px;
+    padding: 8px 15px; /* Reduced size for buttons */
+    margin: 5px;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9em; /* Smaller font size for buttons */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Button shadow */
+}
+
+button.off {
+    background-color: #d32f2f; /* Dark red */
+    color: white;
+}
+
+button.on {
+    background-color: #388e3c; /* Dark green */
+    color: white;
+}
+
+button i {
+    margin-right: 5px; /* Reduced space between icon and text */
+}
+
+button:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Shadow on hover */
+}
+
+button:active {
+    transform: scale(0.95);
+}
+.submit-btn{
+    width: 95%;
+    padding: 18px;
+    margin: 20px;
+    margin-left: 30px;
+    font-size: 20px;
+    background-color: #6fc374ee;
+    font-weight: bold;
+
+}
+
+/* Bulb styling */
+.bulb {
+    font-size: 2em;
+    color: gray; /* Non-glowing initial state */
+    transition: color 0.3s ease;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    table {
+        font-size: 0.9em;
+        border-spacing: 10px 5px; /* Adjust spacing for smaller screens */
+    }
+
+    .header-container {
+        flex-direction: column; /* Stack header elements on smaller screens */
+        align-items: flex-start; /* Align items to the start */
+    }
+
+    h2 {
+        font-size: 1.5em; /* Adjust heading size */
+    }
+
+    .home-button {
+        margin-left: 0; /* Remove left margin for smaller screens */
+        margin-top: 10px; /* Add some space above the button */
+    }
+    
+
+    button {
+        padding: 10px 15px; /* Adjust button size */
+        font-size: 0.9em; /* Smaller font size for buttons */
+    }
+    
+}
